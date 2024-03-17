@@ -51,7 +51,10 @@ exports.config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'chrome',
+        'goog:chromeOptions': {
+            args: ['headless', 'disable-gpu']
+        }
     }],
 
     //
@@ -198,6 +201,38 @@ exports.config = {
 
         browser.addCommand('check_text', async (text) => {
             await Helper.assert_paragraph(`//*[@id='content']//p`, text)
+        })
+
+        browser.addCommand('select_value_from_dropdown', async () => {
+            await Helper.select_value_from_tag(`//*[@id='dropdown']`, '1')
+            await Helper.assert_paragraph(`//*[@id='dropdown']`, 'Option 1')
+        })
+
+        browser.addCommand('before_click_here', async () => {
+            await Helper.assert_paragraph(`//h3`, 'Notification Message')
+        })
+
+        browser.addCommand('after_click_here', async () => {
+            await Helper.click(`//*[text()='Click here']`)
+            const list = ['Action unsuccesful, please try again', 'Action successful']
+            const value = await Helper.get_value_from_tag(`//*[@id='flash' and @class='flash notice']`)
+            const finding_value = list.find((val) => value === val)
+            if (finding_value)
+                await Helper.assert_paragraph(`//*[@id='flash' and @class='flash notice']`, value)
+            else
+                console.log('No value found!')
+        })
+
+        browser.addCommand('wait_hello_world_to_be_displayed', async () => {
+            await Helper.click(`//*[text()='Example 1: Element on page that is hidden']`)
+            await Helper.click(`//*[text()='Start']`)
+            await Helper.wait_element_to_be_displayed(`//*[@id='finish']/h4`, 'Hello World!')
+        })
+
+        browser.addCommand('wait_hello_world_for_existing', async () => {
+            await Helper.click(`//*[text()='Example 2: Element rendered after the fact']`)
+            await Helper.click(`//*[text()='Start']`)
+            await Helper.wait_element_for_existing(`//*[@id='finish']/h4`, 'Hello World!')
         })
     },
     /**
