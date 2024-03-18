@@ -22,7 +22,7 @@ exports.config = {
     // of the config file unless it's absolute.
     //
     specs: [
-        './test/specs/**/*.js'
+        './test/specs/**/*.e2e.js'
     ],
     // Patterns to exclude.
     exclude: [
@@ -233,6 +233,25 @@ exports.config = {
             await Helper.click(`//*[text()='Example 2: Element rendered after the fact']`)
             await Helper.click(`//*[text()='Start']`)
             await Helper.wait_element_for_existing(`//*[@id='finish']/h4`, 'Hello World!')
+        })
+
+        browser.addCommand('add_element', async () => {
+            await Helper.click(`//button[text()='Add Element']`)
+            await Helper.check_element_existing(`//button[text()='Delete']`)
+        })
+
+        browser.addCommand('delete_element', async () => {
+            await Helper.click(`//button[text()='Delete']`)
+            await Helper.check_element_not_existing(`//button[text()='Delete']`)
+        })
+
+        browser.addCommand('check_image_is_broken_or_not', async () => {
+            await Helper.check_broken_image(`//h3//following-sibling::img`)
+        })
+
+        browser.addCommand('right_click_on_context_menu', async () => {
+            await browser.pause(5000)
+            await Helper.right_click_element(`//*[@id='hot-spot']`)
         })
     },
     /**
