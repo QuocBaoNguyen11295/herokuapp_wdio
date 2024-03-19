@@ -71,6 +71,35 @@ async function right_click_element(locator) {
     const text = await browser.getAlertText()
     await expect(text).toEqual(`You selected a context menu`)
 }
+
+async function get_text_alert() {
+    const text = await browser.getAlertText()
+    return text
+}
+
+async function accept_alert() {
+    await browser.acceptAlert()
+}
+
+async function assert_text(locator, text) {
+    const txt = (await $(`${locator}`)).getText()
+    await expect(txt).toEqual(text)
+}
+
+async function send_text_to_alert(text) {
+    await browser.sendAlertText(text)
+}
+
+async function checkbox_is_selected(locator) {
+    const value = (await $(`${locator}`))
+    await expect(value).toBeChecked()
+}
+
+async function hover_image(locator, text) {
+    const locate = await $(`${locator}`)
+    await locate.scrollIntoView()
+    await locate.moveTo()
+}
 const Helper = {
     type_info,
     click,
@@ -85,6 +114,12 @@ const Helper = {
     check_element_existing,
     check_broken_image,
     right_click_element,
+    get_text_alert,
+    accept_alert,
+    assert_text,
+    send_text_to_alert,
+    checkbox_is_selected,
+    hover_image
 }
 
 module.exports = Helper;

@@ -253,6 +253,46 @@ exports.config = {
             await browser.pause(5000)
             await Helper.right_click_element(`//*[@id='hot-spot']`)
         })
+
+        browser.addCommand('click_on_js_for_alert', async () => {
+            await Helper.click(`//*[text()='Click for JS Alert']`)
+            const text = await Helper.get_text_alert()
+            await Helper.accept_alert()
+            await browser.pause(4000)
+            await Helper.assert_paragraph(`//*[@id='result' and @style ='color:green']`, 'You successfully clicked an alert')
+            await expect(text).toEqual('I am a JS Alert')
+        })
+
+        browser.addCommand('click_on_js_for_confirm', async () => {
+            await Helper.click(`//*[text()='Click for JS Confirm']`)
+            const text = await Helper.get_text_alert()
+            await Helper.accept_alert()
+            await browser.pause(4000)
+            await Helper.assert_paragraph(`//*[@id='result' and @style ='color:green']`, 'You clicked: Ok')
+            await expect(text).toEqual('I am a JS Confirm')
+        })
+
+        browser.addCommand('send_text_to_alert', async (message) => {
+            await Helper.click(`//*[text()='Click for JS Prompt']`)
+            await Helper.send_text_to_alert(message)
+            await Helper.accept_alert()
+            await browser.pause(4000)
+            await Helper.assert_paragraph(`//*[@id='result' and @style ='color:green']`, 'You entered: ' + message)
+        })
+
+        browser.addCommand('check_checkboxes_is_selected', async () => {
+            await Helper.click(`//form[@id='checkboxes']/input`)
+            await Helper.checkbox_is_selected(`//form[@id='checkboxes']/input`)
+        })
+
+        browser.addCommand('hover_image_user', async () => {
+            await Helper.hover_image(`//*[@class='figure'][1]//img`)
+            await Helper.assert_paragraph(`//*[@class='figure'][1]//h5`, 'name: user1')
+            await Helper.hover_image(`//*[@class='figure'][2]//img`)
+            await Helper.assert_paragraph(`//*[@class='figure'][2]//h5`, 'name: user2')
+            await Helper.hover_image(`//*[@class='figure'][3]//img`)
+            await Helper.assert_paragraph(`//*[@class='figure'][3]//h5`, 'name: user3')
+        })
     },
     /**
      * Runs before a WebdriverIO command gets executed.
