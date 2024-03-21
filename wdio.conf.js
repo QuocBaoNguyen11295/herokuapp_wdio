@@ -1,4 +1,9 @@
 const Helper = require('../herokuapp_wdio/support/helper')
+var path = require('path');
+const fs = require('fs');
+const pathToChromeDownloads = './chromeDownloads';
+const assert = require('assert');
+const pathToDownload = path.resolve('chromeDownloads');
 exports.config = {
     //
     // ====================
@@ -53,7 +58,10 @@ exports.config = {
     capabilities: [{
         browserName: 'chrome',
         'goog:chromeOptions': {
-            args: ['headless', 'disable-gpu']
+            args: ['headless', 'disable-gpu'],
+            prefs: {
+                "download.default_directory": pathToDownload
+            }
         }
     }],
 
@@ -292,6 +300,43 @@ exports.config = {
             await Helper.assert_paragraph(`//*[@class='figure'][2]//h5`, 'name: user2')
             await Helper.hover_image(`//*[@class='figure'][3]//img`)
             await Helper.assert_paragraph(`//*[@class='figure'][3]//h5`, 'name: user3')
+        })
+
+        browser.addCommand('clean_up_chromeDownload', async () => {
+            fs.rmdirSync(pathToChromeDownloads, { recursive: true });
+            fs.mkdirSync(pathToChromeDownloads, { recursive: true });
+        })
+
+        browser.addCommand('download_file', async (fileName) => {
+            const downloadButton = await $(`//*[text()='${fileName}']`);
+            await downloadButton.click();
+            await browser.pause(5000);
+        })
+
+        browser.addCommand('check_file_exist', async (fileName) => {
+            const expectedFileName = `${fileName}`;
+            const filePath = `${pathToChromeDownloads}/${expectedFileName}`;
+            const fileExists = fs.existsSync(filePath);
+            assert.strictEqual(fileExists, true)
+        })
+
+        browser.addCommand('select_file_from_local_pc', async (fileName) => {
+            const filePath = `./upload_files/${fileName}`
+            const remoteFilePath = await browser.uploadFile(filePath)
+
+            await $('#file-upload').setValue(remoteFilePath)
+            await $('#file-submit').click()
+        })
+
+        browser.addCommand('upload_file', async (fileName) => {
+            await Helper.assert_paragraph('h3', 'File Uploaded!')
+            await Helper.assert_paragraph(`//*[@id='uploaded-files']`, `${fileName}`)
+        })
+
+        browser.addCommand('put_the_value', async (value) => {
+            await Helper.type_info(`//input[@type='number']`, value)
+            const input = await $(`//input[@type='number']`)
+            await expect(await input.getValue()).toEqual(value)
         })
     },
     /**
