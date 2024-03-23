@@ -1,4 +1,7 @@
 const baseURL = 'https://the-internet.herokuapp.com'
+const { Key } = require('webdriverio')
+
+
 async function type_info(locator, info) {
     (await $(`${locator}`)).setValue(info)
 }
@@ -100,6 +103,12 @@ async function hover_image(locator, text) {
     await locate.scrollIntoView()
     await locate.moveTo()
 }
+
+async function key_press(key) {
+    await browser.keys([Key.Ctrl, `${key}`])
+    const value = key.toUpperCase();
+    await assert_paragraph(`//*[@id='result' and @style='color:green']`, `You entered: ${value}`)
+}
 const Helper = {
     type_info,
     click,
@@ -119,7 +128,8 @@ const Helper = {
     assert_text,
     send_text_to_alert,
     checkbox_is_selected,
-    hover_image
+    hover_image,
+    key_press
 }
 
 module.exports = Helper;

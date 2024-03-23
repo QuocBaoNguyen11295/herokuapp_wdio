@@ -338,6 +338,21 @@ exports.config = {
             const input = await $(`//input[@type='number']`)
             await expect(await input.getValue()).toEqual(value)
         })
+
+        browser.addCommand('drag_and_drop_to_column', async (locatorA, locatorB) => {
+            const columnA = await $(`${locatorA}`)
+            const columnB = await $(`${locatorB}`)
+            await columnA.dragAndDrop(columnB)
+        })
+
+        browser.addCommand('check_column_is_changed', async (locatorA, locatorB) => {
+            await Helper.assert_paragraph(`${locatorA}/header`, `B`)
+            await Helper.assert_paragraph(`${locatorB}/header`, `A`)
+        })
+
+        browser.addCommand('key_press', async (key) => {
+            await Helper.key_press(key)
+        })
     },
     /**
      * Runs before a WebdriverIO command gets executed.
