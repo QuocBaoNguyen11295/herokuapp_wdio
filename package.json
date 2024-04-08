@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/QuocBaoNguyen11295/herokuapp_wdio#readme",
   "dependencies": {
-    "@wdio/cli": "^8.32.3"
+    "@wdio/cli": "^8.32.3",
+    "wdio-timeline-reporter": "^5.1.4"
   },
   "devDependencies": {
     "@wdio/local-runner": "^8.34.0",
